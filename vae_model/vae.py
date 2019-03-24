@@ -17,7 +17,7 @@ class VAE:
     def __init__(self,
                  latent_dim: int = 32,
                  beta=1.0,
-                 reconstruction_loss=ReconstructionLoss.BINARY_CROSSENTROPY,
+                 reconstruction_loss=ReconstructionLoss.MSE,
                  optimizer: Optional[Union[Callable, str]] = None):
         self.latent_dim = latent_dim
         self._reconstruction_loss = reconstruction_loss
@@ -69,7 +69,7 @@ class VAE:
 
         ### Custom Loss Functions ###
 
-        def reconstruction(y_true, y_pred):
+        def reconstruction_loss(y_true, y_pred):
             if self._reconstruction_loss == ReconstructionLoss.MSE:
                 r = K.square(y_true - y_pred)
             elif self._reconstruction_loss == ReconstructionLoss.BINARY_CROSSENTROPY:
@@ -78,15 +78,17 @@ class VAE:
                 raise ValueError("Reconstruction loss {0} is not known".format(self._reconstruction_loss))
             return K.sum(r, axis=(1, 2, 3))
 
-        def kl_divergence(y_true=None, y_pred=None):
+        def kl_divergence_loss(y_true=None, y_pred=None):
             return - 0.5 * K.sum(1 + z_log_var - K.square(z_mean) - K.exp(z_log_var), axis=1)
 
         def vae_loss(y_true, y_pred):
-            r_loss = reconstruction(y_true, y_pred)
-            kl_loss = kl_divergence()
+            r_loss = reconstruction_loss(y_true, y_pred)
+            kl_loss = kl_divergence_loss()
             return K.mean(r_loss + self.beta * kl_loss)
 
-        vae.compile(optimizer="adam", loss=vae_loss, metrics=[reconstruction, kl_divergence])
+        vae.compile(optimizer=self.optimizer, loss=vae_loss, metrics=[reconstruction_loss, kl_divergence_loss])
+
+        print("[*] Model is built and compiled")
 
         self.vae = vae
         self.encoder = vae_encoder

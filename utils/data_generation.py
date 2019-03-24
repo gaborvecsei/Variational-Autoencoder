@@ -2,13 +2,13 @@ import numpy as np
 import cv2
 
 
-def generate_circle_image(image_width: int,
-                          image_height: int,
-                          circle_x: int,
-                          circle_y: int,
-                          circle_radius: int,
-                          bg_color_rgb: tuple = None,
-                          circle_color_rgb: tuple = (70, 127, 255)):
+def _create_circle_image(image_width: int,
+                         image_height: int,
+                         circle_x: int,
+                         circle_y: int,
+                         circle_radius: int,
+                         bg_color_rgb: tuple = None,
+                         circle_color_rgb: tuple = (70, 127, 255)):
     image = np.zeros((image_height, image_width, 3), dtype=np.uint8)
 
     if bg_color_rgb is not None:
@@ -34,7 +34,7 @@ def rnd_circle_data_generator(nb_images: int,
         rnd_y = np.random.randint(min_y, max_y)
         min_r, max_r = radius_boundary
         rnd_r = np.random.randint(min_r, max_r)
-        image = generate_circle_image(image_width, image_height, rnd_x, rnd_y, rnd_r)
+        image = _create_circle_image(image_width, image_height, rnd_x, rnd_y, rnd_r)
         yield image
 
 
