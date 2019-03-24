@@ -4,6 +4,8 @@ In this repository you will find a *Variational Autoencoder* implementation whic
 *Convolutional* layers to encode the input images to a latent vector, and *Traansposed Convolutional* layers to
 reconstruct the encoded vectors into images.
 
+<img src="art/reconstruction_random.gif" width="600" alt="interactive random reconstruction">
+
 ## Latent Space Playground
 
 Check out the [notebook](latent_playground.ipynb) which contains the code for the experiments
